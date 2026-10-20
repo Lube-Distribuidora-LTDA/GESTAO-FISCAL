@@ -1,0 +1,88 @@
+/* =============================================================================
+   Gestão Fiscal — o que este painel acrescenta à base (base.css, a mesma da Gestão
+   Comercial e do Movimentação de Inventário): chips de região, a matriz produto ×
+   região, a etiqueta de situação e os miúdos da faixa de filtros.
+   Cor de situação: verde completo, vermelho sem tributação, âmbar sem preço,
+   violeta sem os dois, cinza fora da tabela da região.
+   ========================================================================== */
+#conteudo { position: relative; }
+
+/* ------------------------------ faixa de filtros ------------------------------ */
+.fx-hoje { display: inline-flex; align-items: center; gap: 8px; font: 600 12.5px var(--f-txt); color: var(--t2); background: var(--s1); border: 1px solid var(--linha); border-radius: 10px; height: 34px; padding: 0 12px; }
+.fx-hoje svg { width: 14px; height: 14px; stroke: var(--ouro); fill: none; stroke-width: 2; }
+.pilula.fora { opacity: .45; filter: grayscale(.6); }
+.pop mark, .pop-item mark { background: var(--ouro-dim); color: var(--ouro-forte); border-radius: 3px; padding: 0 1px; }
+.pop-item .foto-mini { width: 28px; height: 28px; border-radius: 7px; }
+
+/* ------------------------------ avisos ------------------------------ */
+.aviso-faixa { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; padding: 12px 16px; border-radius: 12px; font: 500 13px/1.5 var(--f-txt); color: var(--t2); }
+.aviso-faixa > svg { width: 20px; height: 20px; fill: none; stroke-width: 2; flex: none; }
+.aviso-faixa > span { flex: 1; } .aviso-faixa b { color: var(--t1); }
+.aviso-faixa.atencao { background: var(--atencao-bg); border: 1px solid color-mix(in srgb, var(--atencao) 42%, transparent); }
+.aviso-faixa.atencao > svg { stroke: var(--atencao); }
+.vazio.grande { padding: 70px 18px 24px; font-size: 14px; }
+.vazio.grande b { font-size: 18px; margin-bottom: 8px; }
+
+/* ------------------------------ etiqueta de situação ------------------------------ */
+.tag.sit { background: color-mix(in srgb, var(--c) 18%, transparent); color: color-mix(in srgb, var(--c) 82%, var(--t1)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 38%, transparent); text-transform: none; letter-spacing: .01em; font-size: 11px; white-space: nowrap; }
+#dica .dica-sub { margin-top: 6px; font: 500 11.5px/1.4 var(--f-txt); color: var(--t3); max-width: 320px; white-space: normal; }
+
+/* ------------------------------ chips de região ------------------------------ */
+.chips-reg { display: flex; flex-wrap: wrap; gap: 4px; min-width: 282px; max-width: 300px; white-space: normal; }
+.chip-reg { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 22px; padding: 0 6px; border-radius: 7px; border: 0;
+  font: 800 11px var(--f-num); font-style: normal; color: #fff; background: var(--cc, var(--d8)); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); transition: transform .12s, box-shadow .12s; }
+button.chip-reg { cursor: pointer; }
+button.chip-reg:hover { transform: translateY(-1px) scale(1.06); box-shadow: 0 0 0 2px var(--ouro); }
+.chip-reg.s1 { --cc: var(--perigo); }
+.chip-reg.s2 { --cc: var(--atencao); color: #1b1303; }
+.chip-reg.s3 { --cc: var(--d3); }
+.chip-reg.s4 { --cc: color-mix(in srgb, var(--d8) 70%, var(--s3)); }
+.chip-reg.vendeu { box-shadow: 0 0 0 2px var(--ouro), inset 0 0 0 1px rgba(255,255,255,.2); }
+.chip-nada { font: 600 11.5px var(--f-txt); color: var(--t3); }
+.tabela td .chips-reg { padding: 1px 0; }
+.tabela td:has(.chips-reg) { max-width: none; overflow: visible; }
+.leg-chips { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font: 600 11.5px var(--f-txt); color: var(--t2); }
+.leg-chips span { display: inline-flex; align-items: center; gap: 6px; }
+.leg-chips .chip-reg { min-width: 26px; height: 18px; font-size: 10px; }
+
+/* ------------------------------ mapa produto × região ------------------------------ */
+.mapa-wrap { max-height: 70vh; }
+table.tabela.mapa td, table.tabela.mapa th { padding: 6px 6px; }
+table.tabela.mapa td.f1, table.tabela.mapa th.f1 { padding-left: 14px; min-width: 300px; max-width: 360px; box-shadow: 8px 0 12px -10px rgba(0,0,0,.6); }
+table.tabela.mapa td.f1.click { cursor: pointer; }
+table.tabela.mapa td.f1.click:hover b { color: var(--ouro-forte); }
+table.tabela.mapa .cel-txt { display: grid; }
+table.tabela.mapa .cel-txt b { font: 600 12.5px var(--f-txt); overflow: hidden; text-overflow: ellipsis; }
+table.tabela.mapa .cel-txt small { font: 500 11px var(--f-txt); color: var(--t3); }
+table.tabela.mapa th.col-reg { text-align: center; cursor: pointer; min-width: 40px; letter-spacing: 0; }
+table.tabela.mapa th.col-reg b { display: block; font: 800 12px var(--f-num); color: var(--t1); }
+table.tabela.mapa th.col-reg small { display: block; font: 700 9.5px var(--f-txt); color: var(--t3); }
+table.tabela.mapa th.col-reg:hover b { color: var(--ouro-forte); }
+table.tabela.mapa td.cel-m { text-align: center; }
+table.tabela.mapa td.pend { color: var(--perigo); font-weight: 800; }
+table.tabela.mapa td.zero, table.tabela.mapa td.tot-reg.zero { color: var(--t3); }
+table.tabela.mapa tfoot td { font-size: 11.5px; }
+table.tabela.mapa tfoot td.f1 { font: 800 11px var(--f-txt); letter-spacing: .08em; text-transform: uppercase; color: var(--t3); }
+.q { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 22px; border-radius: 6px; cursor: pointer;
+  font: 800 11px var(--f-num); color: #fff; background: var(--cq); transition: transform .12s, box-shadow .12s; }
+.q:hover { transform: scale(1.15); box-shadow: 0 0 0 2px var(--ouro); }
+.q.s0 { --cq: color-mix(in srgb, var(--ok) 26%, var(--s2)); color: var(--ok); }
+.q.s1 { --cq: var(--perigo); }
+.q.s2 { --cq: var(--atencao); color: #1b1303; }
+.q.s3 { --cq: var(--d3); }
+.q.s4 { --cq: color-mix(in srgb, var(--d8) 55%, var(--s3)); color: var(--t2); }
+.q.vendeu { box-shadow: 0 0 0 2px var(--ouro); }
+
+/* ------------------------------ cartões: seis numa linha sem cortar o número ------------------------------ */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); }
+.kpis > .kpi, .kpis > .kpi.heroi { flex: none; min-width: 0; }
+.kpi { padding: 15px 15px 13px; }
+.kpi .val { font-size: clamp(17px, 1.32vw, 23px); }
+.kpi .rot { letter-spacing: .1em; }
+.kpi .leg span { overflow-wrap: anywhere; }
+
+/* ------------------------------ miúdos ------------------------------ */
+.menu-rodape .versao { margin-top: 4px; opacity: .7; font-family: var(--f-num); font-size: 10.5px; }
+.btn-ic.girando svg { animation: gira 1s linear infinite; }
+@keyframes gira { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .chip-reg, .q { transition: none; } }

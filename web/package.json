@@ -1,0 +1,15 @@
+{
+  "name": "gestao-fiscal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gestao Fiscal - tributacao e preco de venda por regiao (rotina 201 do WinThor) - Lube Distribuidora",
+  "scripts": {
+    "start": "node servidor_local.js"
+  },
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "pg": "^8.23.1"
+  }
+}

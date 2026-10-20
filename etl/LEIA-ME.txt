@@ -1,0 +1,37 @@
+GESTAO FISCAL - LEIA-ME
+=======================
+
+O que e: o BI do Fiscal com a TRIBUTACAO e o PRECO DE VENDA de cada produto em cada
+regiao, da rotina 201 do WinThor (Precificar Produto -> PCTABPR). Mostra, produto a
+produto, em que regioes falta a tributacao (CODST) e em que regioes falta o preco.
+
+Caminho: WinThor (Oracle) -> ETL em Python (VM SRV-IA) -> Supabase, projeto
+DATA WAREHOUSE, schema "fiscal" -> painel na Vercel.
+
+Universo: produtos de revenda nao excluidos x as regioes escolhidas pelo Julio
+(18, 19, 23, 27, 31, 33, 35, 37, 38, 39, 40, 41, 42, 43, 45, 46). Para mudar as
+regioes, edite FISCAL_REGIOES no ENV e rode o ATUALIZAR AGORA.bat.
+
+Pastas
+  1 - CONFIGURACAO        o ENV (senhas do Oracle e do Supabase) e o ENV.example
+  2 - SISTEMA FISCAL      os scripts do ETL
+  3 - INSTALACAO          o instalador (instalar_e_agendar.ps1)
+
+O que rodar
+  INSTALAR TUDO.bat    uma vez, NA VM SRV-IA: copia o ETL para C:\BI\FISCAL,
+                       cria a tarefa "Fiscal - Sync" (07:15, 10:15, 13:15, 16:15 e
+                       19:15) e roda uma carga de teste.
+  ATUALIZAR AGORA.bat  quando quiser o dado na hora: copia o ETL e roda uma carga,
+                       sem mexer no agendamento.
+  DIAGNOSTICO.bat      testa tudo contra o WinThor SEM GRAVAR NADA e confere a
+                       tabela extraida contra a contagem do proprio WinThor.
+
+A carga entrou?
+  Nao confie no log da tela. Consulte fiscal.controle_carga no Supabase
+  (projeto DATA WAREHOUSE): cada passo grava uma linha (OK, AVISO ou ERRO). O passo
+  "conferencia" compara o banco com a PCTABPR, regiao a regiao, na mesma foto do Oracle.
+
+Problemas
+  - "a tarefa rodou e nada aconteceu": veja C:\BI\FISCAL\falha_inicial.log
+  - "Ja existe uma carga rodando": outra maquina (ou o ATUALIZAR AGORA) esta com a
+    carga na mao; esta rodada foi pulada de proposito.
