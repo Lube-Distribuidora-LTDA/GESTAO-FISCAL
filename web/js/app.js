@@ -39,7 +39,7 @@ function rodape() {
   var M = L.META;
   L.$("menu-rodape").innerHTML =
     '<div><span class="vivo"></span><b>Preço e tributação de ' + L.esc(L.fDataHora(M.carga || M.gerado_em)) + "</b></div>" +
-    "<div>Venda: últimos " + L.esc(M.meses_venda) + " meses" + (L.ORIGEM === "copia" ? " · cópia deste computador" : L.ORIGEM === "offline" ? " · <b>sem conexão</b>" : "") + "</div>" +
+    "<div>Venda: últimos " + L.esc(M.meses_venda) + " meses" + (L.NOVA_CARGA ? " · <b>há carga nova: clique em Atualizar</b>" : L.ORIGEM === "copia" ? " · cópia deste computador, conferindo…" : L.ORIGEM === "copia-ok" ? " · cópia deste computador (a mais recente)" : L.ORIGEM === "offline" ? " · <b>sem conexão</b>" : "") + "</div>" +
     "<div>" + L.fInt(L.P.n) + " produtos de revenda · " + L.R.n + " regiões</div>" +
     '<div class="versao">versão ' + L.esc(window.VERSAO || "") + "</div>";
 }
@@ -137,8 +137,10 @@ function apresentar(on) {
   setTimeout(L.redesenharTudo, 120);
 }
 function navegarPaginas(d) { var i = L.ordemPaginas.indexOf(L.estado.pagina) + d; if (i >= 0 && i < L.ordemPaginas.length) L.irPara(L.ordemPaginas[i]); }
+L.ouvir("origem", function () { rodape(); L.$("btn-atualizar").classList.toggle("novo", !!L.NOVA_CARGA); });
 function atualizarDados() {
   var b = L.$("btn-atualizar"); b.classList.add("girando");
+  if (L.NOVA_CARGA) { L.toast("Abrindo a carga das " + L.fDataHora(L.NOVA_CARGA.gerado_em) + "…", "ok"); setTimeout(function () { location.reload(); }, 400); return; }
   L.versaoNoBanco().then(function (v) {
     if (v.versao !== L.META.versao) { L.toast("Há dados novos (carga das " + L.fDataHora(v.gerado_em) + ") — carregando…", "ok"); setTimeout(function () { location.reload(); }, 700); }
     else { b.classList.remove("girando"); L.toast("Já está na carga mais recente (" + L.fDataHora(v.gerado_em) + "). A próxima carga sai sozinha, no horário agendado.", "ok"); }

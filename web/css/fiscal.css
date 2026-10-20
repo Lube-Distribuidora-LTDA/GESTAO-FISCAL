@@ -85,5 +85,6 @@ table.tabela.mapa tfoot td.f1 { font: 800 11px var(--f-txt); letter-spacing: .08
 /* ------------------------------ miúdos ------------------------------ */
 .menu-rodape .versao { margin-top: 4px; opacity: .7; font-family: var(--f-num); font-size: 10.5px; }
 .btn-ic.girando svg { animation: gira 1s linear infinite; }
+.btn-ic.novo { border-color: var(--ouro); box-shadow: 0 0 0 3px var(--ouro-dim); } .btn-ic.novo svg { stroke: var(--ouro); }
 @keyframes gira { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .chip-reg, .q { transition: none; } }

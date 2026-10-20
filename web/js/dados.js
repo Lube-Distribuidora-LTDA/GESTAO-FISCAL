@@ -85,26 +85,34 @@ function baixarPacote(versao, aoProgresso) {
   }).then(function (txt) { return JSON.parse(txt); });
 }
 
-/* Abre o painel: cópia do navegador primeiro (se for a versão do banco, nem baixa). */
+/* Abre o painel. Com cópia guardada neste computador, a tela abre NA HORA com ela e a
+   versão do banco é conferida por trás (o banco pode levar 20 s para responder; quem abre
+   não espera por isso). Chegou carga nova: baixa por trás, guarda, e o botão Atualizar
+   acende. Sem cópia (primeira vez), aí sim espera o banco. */
 L.carregarTudo = function (aoAviso) {
   var aviso = aoAviso || function () {};
-  return Promise.all([
-    fetch("api/versao?_=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : erroHttp(r, "a versão dos dados"); }),
-    idbLer(),
-  ]).then(function (r) {
-    var ver = r[0], copia = r[1];
-    if (copia && copia.versao === ver.versao) { L.ORIGEM = "copia"; return preparar(copia.pacote, ver.versao); }
-    aviso(copia ? "Baixando os dados da carga das " + L.fDataHora(ver.gerado_em) + "…" : "Baixando os dados (só na primeira vez)…");
-    return baixarPacote(ver.versao, function (l, t) { aviso("Baixando os dados… " + (t ? Math.round(l / t * 100) + "%" : L.fNum(l / 1048576, 1) + " MB")); })
-      .then(function (pac) { L.ORIGEM = "banco"; idbGravar({ versao: ver.versao, pacote: pac }); return preparar(pac, ver.versao); });
-  }, function (e) {
-    return idbLer().then(function (copia) {
-      if (!copia) throw e;
-      L.ORIGEM = "offline"; L.toast("Sem conexão com o servidor: mostrando os dados guardados neste computador", "erro");
+  return idbLer().then(function (copia) {
+    if (copia && copia.pacote) {
+      L.ORIGEM = "copia";
+      setTimeout(function () { conferirPorTras(copia.versao); }, 400);
       return preparar(copia.pacote, copia.versao);
+    }
+    aviso("Baixando os dados (só na primeira vez)…");
+    return L.versaoNoBanco().then(function (ver) {
+      return baixarPacote(ver.versao, function (l, t) { aviso("Baixando os dados… " + (t ? Math.round(l / t * 100) + "%" : L.fNum(l / 1048576, 1) + " MB")); })
+        .then(function (pac) { L.ORIGEM = "banco"; idbGravar({ versao: ver.versao, pacote: pac }); return preparar(pac, ver.versao); });
     });
   });
 };
+function conferirPorTras(versaoCopia) {
+  L.versaoNoBanco().then(function (ver) {
+    if (!ver || ver.versao === versaoCopia || ver.versao === "calculado") { L.ORIGEM = "copia-ok"; L.emitir("origem"); return; }
+    return baixarPacote(ver.versao).then(function (pac) { return idbGravar({ versao: ver.versao, pacote: pac }); }).then(function () {
+      L.NOVA_CARGA = ver; L.emitir("origem");
+      L.toast("Chegou a carga das " + L.fDataHora(ver.gerado_em) + ": clique em Atualizar (o relógio, no alto) para ver", "ok");
+    });
+  }).catch(function () { L.ORIGEM = "offline"; L.emitir("origem"); L.toast("Sem conexão com o servidor agora: mostrando os dados guardados neste computador", "erro"); });
+}
 L.versaoNoBanco = function () { return fetch("api/versao?_=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : erroHttp(r, "a versão dos dados"); }); };
 
 /* ------------------------------ preparo das estruturas ------------------------------ */
