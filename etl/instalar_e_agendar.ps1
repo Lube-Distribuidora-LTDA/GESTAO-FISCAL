@@ -264,7 +264,7 @@ try {
         -StartWhenAvailable `
         -AllowStartIfOnBatteries `
         -DontStopIfGoingOnBatteries `
-        -ExecutionTimeLimit (New-TimeSpan -Hours 1) `
+        -ExecutionTimeLimit (New-TimeSpan -Minutes 25) `
         -MultipleInstances IgnoreNew `
         -Hidden
 
@@ -371,11 +371,15 @@ try {
     }
 
     # --- criar a tarefa de verdade, no modo que passou ----------------------
-    # Horarios aos :15, de proposito: o INVENTARIO roda aos :05, o TRADE aos :25, o
-    # REPOSICOES aos :35, o COMERCIAL aos :45 e o COMPRAS aos :50 - dois ETLs na mesma
-    # hora disputam o mesmo Oracle e o mesmo banco. A 201 e usada o dia inteiro: uma
-    # carga antes do expediente e outras quatro ao longo do dia.
-    $horarios = @("07:15", "10:15", "13:15", "16:15", "19:15")
+    # De 30 em 30 minutos, das 07:10 as 19:40 (pedido do Julio em 2026-10-20: "preciso que
+    # seja a cada 30 min"). Aos :10 e :40 de proposito: o INVENTARIO comeca aos :05, o TRADE
+    # aos :25, o REPOSICOES aos :35, o COMERCIAL aos :45 e o COMPRAS aos :50 - nenhum outro
+    # ETL comeca no mesmo minuto. A carga leva ~15 s na VM; se uma atrasar, a seguinte e
+    # pulada (MultipleInstances IgnoreNew), e a tranca do banco impede duas ao mesmo tempo.
+    $horarios = @()
+    for ($m = 7 * 60 + 10; $m -le 19 * 60 + 40; $m += 30) {
+        $horarios += ("{0:D2}:{1:D2}" -f [int][math]::Floor($m / 60), ($m % 60))
+    }
 
     Write-Host ""
     Write-Host "Criando a tarefa no modo que passou..."
@@ -445,7 +449,7 @@ try {
     Write-Host "fiscal.controle_carga no Supabase (projeto DATA WAREHOUSE)." -ForegroundColor Cyan
     if ($modoBom.nome -eq "Interactive") {
         Write-Host ""
-        Write-Host "ATENCAO: neste modo a carga das 19:15 so roda se" -ForegroundColor Yellow
+        Write-Host "ATENCAO: neste modo as cargas so rodam se" -ForegroundColor Yellow
         Write-Host "voce deixar o Windows logado (pode bloquear a tela, mas nao deslogar)." -ForegroundColor Yellow
     }
 

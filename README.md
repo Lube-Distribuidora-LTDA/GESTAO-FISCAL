@@ -125,8 +125,9 @@ npm install
 node servidor_local.js           # http://localhost:3103
 ```
 
-Agendamento (na VM `SRV-IA`): `P:\INTEGRAÇÃO BI\FISCAL\INSTALAR TUDO.bat` — tarefa `Fiscal - Sync` às 07:15, 10:15,
-13:15, 16:15 e 19:15. "A carga entrou?" se responde em `fiscal.controle_carga`, nunca pelo log da tela.
+Agendamento (na VM `SRV-IA`): `P:\INTEGRAÇÃO BI\FISCAL\INSTALAR TUDO.bat` — tarefa `Fiscal - Sync` **de 30 em 30 minutos,
+das 07:10 às 19:40** (26 cargas; aos :10 e :40, minutos em que nenhum outro ETL começa; pedido do Júlio em 2026-10-20). Se uma
+carga atrasar, a seguinte é pulada (`IgnoreNew`, limite de 25 min por carga). _Até 2026-10-20 eram 5 cargas, aos :15._ "A carga entrou?" se responde em `fiscal.controle_carga`, nunca pelo log da tela.
 
 ## Vercel
 
