@@ -123,9 +123,12 @@ Agendamento (na VM `SRV-IA`): `P:\INTEGRAÇÃO BI\FISCAL\INSTALAR TUDO.bat` — 
 
 ## Vercel
 
-Root Directory `web`, Framework Other, sem build, região `gru1`. Variáveis (cadastradas pelo Júlio, porta **5432**):
+Projeto `gestao-fiscal` (`prj_YF4fRNaCEaKmEmjbVTN5ZIpUTjMl`), **https://gestao-fiscal.vercel.app**, ligado a este
+repositório (push na `main` publica sozinho). Root Directory `web`, Framework Other, sem build, região `gru1`, Node 22.x,
+Vercel Authentication Standard. Variáveis (cadastradas pelo Júlio, Production, Sensitive, porta **5432**):
 `SUPABASE_DB_HOST`, `SUPABASE_DB_PORT`, `SUPABASE_DB_NAME`, `SUPABASE_DB_USER`, `SUPABASE_DB_PASSWORD`. Guarda da
-Sentinela com `exige_login` (projeto `gestao-fiscal`). **Ainda não publicado** (2026-10-20).
+Sentinela com `exige_login`, registrado no banco do portal **antes** do primeiro deploy (2026-10-20); o cartão do portal
+("GESTÃO FISCAL", categoria CONTABILIDADE) nasceu inativo.
 
 ## Acesso
 
