@@ -9,7 +9,7 @@
 (function () {
 "use strict";
 var L = window.L;
-var MAIS = ["uf", "filialReg", "produto", "ncm", "trib", "estoque", "venda", "cadastro", "vendaReg"];
+var MAIS = ["uf", "filialReg", "produto", "ncm", "trib", "venda", "cadastro", "vendaReg"];
 
 L.registrarPagina({
   id: "produtos", grupo: "Tributação e preço", menu: "Produtos", icone: "tabela",

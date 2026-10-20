@@ -45,7 +45,8 @@ Recortes (no ENV):
     FISCAL_REGIOES=18,19,23,...           as regioes que o painel mostra (padrao: as 16 que o Julio
                                           escolheu em 2026-10-20; a regiao 1 ficou de fora no pedido)
     FISCAL_MESES_VENDA=12                 janela da venda por produto x regiao
-    FISCAL_FILIAIS_ESTOQUE=1,7,10,11,12   filiais somadas no estoque (as de distribuicao)
+    FISCAL_FILIAIS_ESTOQUE=1,11,12        filiais onde o produto precisa ter estoque para entrar, e que
+                                          somam o estoque mostrado (pedido do Julio em 2026-10-20)
 
 Universo: produtos ATIVOS (nao excluidos, de revenda, em linha, fora do fornecedor
 "INATIVOS" e sem ser item de consumo; criterios e numeros em UNIVERSO, abaixo) x as
@@ -62,7 +63,8 @@ from typing import Any
 
 from bi_comum import Consulta, inteiro, texto
 
-FILIAIS_PADRAO = "1,7,10,11,12"
+# Pedido do Julio em 2026-10-20: "preciso apenas dos produtos que tem estoque nas filiais 1, 11 e 12".
+FILIAIS_PADRAO = "1,11,12"
 # Pedido do Julio em 2026-10-20: "eu preciso de apenas algumas regioes".
 REGIOES_PADRAO = "18,19,23,27,31,33,35,37,38,39,40,41,42,43,45,46"
 
@@ -248,6 +250,8 @@ def _mapear_preco(r: dict[str, Any]) -> tuple:
 #      9 MATERIAL CONSUMO; tirou 66 itens, nenhum com venda em 12 meses
 #   6. com tipo de mercadoria preenchido (TIPOMERC): tirou 3 sem tipo (copiadora, cadeiras, tecido), sem venda
 #      nem estoque
+#   7. com ESTOQUE (QTESTGER > 0) em pelo menos uma das filiais de FISCAL_FILIAIS_ESTOQUE (padrao 1, 11 e 12;
+#      pedido do Julio em 2026-10-20). Dos 5.328 ativos, 4.272 tem; "nas tres ao mesmo tempo" seriam so 10.
 # O TIPOMERC = 'MC' (material de consumo) NAO serve de criterio: o Guarana Antarctica, a Sukita e a Agua
 # Tonica estao cadastrados como MC e sao de revenda, com venda -- filtrar por ele esconderia produto vendido.
 FORNEC_INATIVOS = int((os.environ.get("FISCAL_FORNEC_INATIVOS") or "658801").strip() or "658801")
@@ -256,6 +260,7 @@ UNIVERSO = (
     "P.DTEXCLUSAO IS NULL AND NVL(P.REVENDA, 'S') <> 'N' AND NVL(P.OBS2, ' ') <> 'FL'"
     f" AND NVL(P.CODFORNEC, 0) <> {FORNEC_INATIVOS} AND NVL(P.CODEPTO, 0) <> {DEPTO_CONSUMO}"
     " AND UPPER(P.DESCRICAO) NOT LIKE '%CONSUMO%' AND P.TIPOMERC IS NOT NULL"
+    " AND EXISTS (SELECT 1 FROM PCEST E WHERE E.CODPROD = P.CODPROD AND E.QTESTGER > 0 AND " + _in_filial("E.CODFILIAL") + ")"
 )
 
 

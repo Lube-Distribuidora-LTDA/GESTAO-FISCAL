@@ -49,6 +49,9 @@ sem preço + sem os dois + fora da tabela.
   "CONSUMO" ou departamento 9 Material Consumo; e tipo de mercadoria preenchido). O `TIPOMERC = 'MC'` não serve de critério:
   Guaraná Antarctica, Sukita e Água Tônica estão como MC e são de revenda, com venda. Regra e números em
   `etl/consultas_fiscal.py` (`UNIVERSO`).
+- **E com estoque** (`QTESTGER > 0`) em pelo menos uma das **filiais 1, 11 ou 12** (pedido do Júlio em 2026-10-20: "preciso apenas dos
+  produtos que tem estoque nas filiais 1, 11 e 12"; "nas três ao mesmo tempo" seriam só 10 produtos) — 4.274 em 2026-10-20. O
+  estoque mostrado na tela soma essas três filiais (`FISCAL_FILIAIS_ESTOQUE`).
 - **Venda:** `CODOPER = 'S'` não cancelada dos últimos 12 meses, `QT × (PUNIT + VLOUTROS)`, todas as filiais (o que
   importa é a região de preço da venda).
 

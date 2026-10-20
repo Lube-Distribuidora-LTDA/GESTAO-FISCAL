@@ -190,7 +190,7 @@ function barrasProd(corpo, sel, dim, f0, n) {
 /* ============================ PRODUTO: por região ============================ */
 function abaProduto(ent, es) {
   var raiz = L.h("div"), P = L.P, R = L.R, C = L.C, T = L.T, pi = P.i.get(+ent.id);
-  if (pi == null) { raiz.appendChild(L.h("div", { class: "vazio", html: "<b>Produto fora do painel</b>O painel mostra só produtos ativos: em linha, de revenda, fora do fornecedor INATIVOS e sem itens de consumo." })); return raiz; }
+  if (pi == null) { raiz.appendChild(L.h("div", { class: "vazio", html: "<b>Produto fora do painel</b>O painel mostra só produtos ativos (em linha, de revenda, fora do fornecedor INATIVOS e sem itens de consumo) com estoque nas filiais 1, 11 ou 12." })); return raiz; }
   // regiões da tela (os filtros de região valem; os de célula não: o relatório do produto mostra todas as regiões dele)
   var fR = {}; ["regiao", "uf", "filialReg"].forEach(function (k) { if (es.f[k]) fR[k] = es.f[k]; });
   var regs = L.filtrar({ f: fR }).regs, cels = Array.prototype.map.call(regs, function (ri) { return pi * R.n + ri; });
@@ -201,7 +201,7 @@ function abaProduto(ent, es) {
     L.kpi({ icone: "percent", rot: "Regiões sem tributação", valor: semT, fmt: L.fInt, classe: semT ? "perigo" : "zero", leg: L.h("span", { text: cont[1] + " com preço · " + (cont[3] + cont[4]) + " sem os dois" }) }),
     L.kpi({ icone: "etiqueta", rot: "Regiões sem preço de venda", valor: semP, fmt: L.fInt, classe: semP ? "atencao" : "zero", leg: L.h("span", { text: cont[2] + " com tributação · " + (cont[3] + cont[4]) + " sem os dois" }) }),
     L.kpi({ icone: "dinheiro", rot: "Vendeu e tem pendência", valor: vend, fmt: L.fInt, classe: vend ? "atencao" : "zero", leg: L.h("span", { text: "regiões com venda em " + L.META.meses_venda + " meses" }) }),
-    L.kpi({ icone: "armazem", rot: "Estoque hoje", valor: P.est[pi], fmt: L.fQ, leg: L.h("span", { text: "filiais de distribuição" + (P.un[pi] ? " · " + P.un[pi] : "") }) })));
+    L.kpi({ icone: "armazem", rot: "Estoque hoje", valor: P.est[pi], fmt: L.fQ, leg: L.h("span", { text: "filiais 1, 11 e 12" + (P.un[pi] ? " · " + P.un[pi] : "") }) })));
   var t = L.tabela({
     titulo: "Tributação e preço por região — " + P.desc[pi] + " (cód. " + P.cod[pi] + ")", arquivo: "fiscal-produto-" + P.cod[pi], aba: "Por região", porPagina: 0, linhas: cels, ordem: { id: "reg", desc: false },
     filtrosTexto: function () { return L.descricaoFiltros([["Produto", P.cod[pi] + " · " + P.desc[pi]]]); }, busca: false,

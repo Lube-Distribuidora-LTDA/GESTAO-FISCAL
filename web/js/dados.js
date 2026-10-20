@@ -374,7 +374,7 @@ L.celRi = function (c) { return c % L.R.n; };
 L.descricaoFiltros = function (extra) {
   var out = [], f = L.estado.filtros;
   out.push(["Posição", "preço e tributação da carga de " + L.fDataHora(L.META.carga || L.META.gerado_em)]);
-  out.push(["Universo", "produtos ativos (em linha, de revenda, fora do fornecedor INATIVOS e sem itens de consumo) × " + L.R.n + " regiões escolhidas"]);
+  out.push(["Universo", "produtos ativos (em linha, de revenda, fora do fornecedor INATIVOS e sem itens de consumo) com estoque nas filiais 1, 11 ou 12 × " + L.R.n + " regiões escolhidas"]);
   Object.keys(f).forEach(function (k) {
     var a = f[k]; if (!a || !a.length || !L.DIM[k]) return;
     var nomes = a.map(function (id) { return L.nomeDe(k, id); });

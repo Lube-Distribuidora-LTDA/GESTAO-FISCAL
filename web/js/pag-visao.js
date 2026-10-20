@@ -6,7 +6,7 @@
 (function () {
 "use strict";
 var L = window.L;
-var MAIS = ["uf", "filialReg", "secao", "produto", "ncm", "trib", "estoque", "venda", "cadastro", "vendaReg"];
+var MAIS = ["uf", "filialReg", "secao", "produto", "ncm", "trib", "venda", "cadastro", "vendaReg"];
 
 L.registrarPagina({
   id: "visao", grupo: "Tributação e preço", menu: "Visão geral", icone: "home",
@@ -56,7 +56,7 @@ function render(raiz) {
   var tab = L.tabelaCelulas(urg, { titulo: "Venderam na região e hoje têm pendência", arquivo: "fiscal-vendeu-e-tem-pendencia", aba: "Mais urgentes", rank: true,
     filtrosTexto: function () { return L.descricaoFiltros([["Lista", "produto × região que vendeu nos últimos " + L.META.meses_venda + " meses e hoje está sem tributação ou sem preço"]]); } });
   raiz.appendChild(L.grade(L.painel({ titulo: "Mais urgentes: venderam na região e hoje estão sem tributação ou sem preço", sub: "venda faturada dos últimos " + L.META.meses_venda + " meses na própria região · do maior para o menor · clique para abrir o produto", classe: "c-12", semPad: true, corpo: tab })));
-  raiz.appendChild(L.nota("Situação de hoje na rotina 201 (PCTABPR), carga de " + L.fDataHora(L.META.carga || L.META.gerado_em) + ". Só produtos ativos (em linha, de revenda, fora do fornecedor INATIVOS e sem itens de consumo) × as " + L.R.n + " regiões escolhidas. \"Sem tributação\" = sem CODST na região (ou CODST que não existe na 514); \"sem preço\" = preço de venda zero ou vazio; \"fora da 201\" = o produto nunca foi precificado na região. A tributação por UF (PCTABTRIB) está desligada no WinThor e não entra."));
+  raiz.appendChild(L.nota("Situação de hoje na rotina 201 (PCTABPR), carga de " + L.fDataHora(L.META.carga || L.META.gerado_em) + ". Só produtos ativos (em linha, de revenda, fora do fornecedor INATIVOS e sem itens de consumo) com estoque nas filiais 1, 11 ou 12 × as " + L.R.n + " regiões escolhidas. \"Sem tributação\" = sem CODST na região (ou CODST que não existe na 514); \"sem preço\" = preço de venda zero ou vazio; \"fora da 201\" = o produto nunca foi precificado na região. A tributação por UF (PCTABTRIB) está desligada no WinThor e não entra."));
 }
 
 function barras(corpo, sel, dim, n) {

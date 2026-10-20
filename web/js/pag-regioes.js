@@ -6,7 +6,7 @@
 (function () {
 "use strict";
 var L = window.L;
-var MAIS = ["filialReg", "secao", "produto", "ncm", "trib", "estoque", "venda", "cadastro", "vendaReg"];
+var MAIS = ["filialReg", "secao", "produto", "ncm", "trib", "venda", "cadastro", "vendaReg"];
 
 L.registrarPagina({
   id: "regioes", grupo: "Tributação e preço", menu: "Regiões", icone: "pino",

@@ -7,7 +7,7 @@
 (function () {
 "use strict";
 var L = window.L;
-var MAIS = ["uf", "filialReg", "produto", "ncm", "trib", "estoque", "venda", "cadastro", "vendaReg"];
+var MAIS = ["uf", "filialReg", "produto", "ncm", "trib", "venda", "cadastro", "vendaReg"];
 var est = { pag: 0, porPag: 50, busca: "", ord: "venda" };
 
 L.registrarPagina({

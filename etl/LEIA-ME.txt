@@ -9,7 +9,7 @@ Caminho: WinThor (Oracle) -> ETL em Python (VM SRV-IA) -> Supabase, projeto
 DATA WAREHOUSE, schema "fiscal" -> painel na Vercel.
 
 Universo: produtos ATIVOS (em linha, de revenda, fora do fornecedor INATIVOS e sem
-itens de consumo) x as regioes escolhidas pelo Julio
+itens de consumo) COM ESTOQUE nas filiais 1, 11 ou 12 x as regioes escolhidas pelo Julio
 (18, 19, 23, 27, 31, 33, 35, 37, 38, 39, 40, 41, 42, 43, 45, 46). Para mudar as
 regioes, edite FISCAL_REGIOES no ENV e rode o ATUALIZAR AGORA.bat.
 

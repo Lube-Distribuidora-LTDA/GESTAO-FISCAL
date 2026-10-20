@@ -76,7 +76,7 @@ L.colunasProduto = function () {
     { id: "dep", titulo: "Departamento", tipo: "texto", valor: function (x) { return L.nomeDe("depto", P.dep[x.pi]); }, essencial: false },
     { id: "sec", titulo: "Seção", tipo: "texto", valor: function (x) { return L.nomeDe("secao", P.sec[x.pi]); }, essencial: false },
     { id: "ncm", titulo: "NCM", tipo: "texto", valor: function (x) { return L.fNcm(P.ncm[x.pi]); }, essencial: false },
-    { id: "est", titulo: "Estoque", tipo: "num", valor: function (x) { return P.est[x.pi]; }, fmt: L.fQ, exportarTipo: "inteiro", essencial: false },
+    { id: "est", titulo: "Estoque (fil. 1, 11 e 12)", tipo: "num", valor: function (x) { return P.est[x.pi]; }, fmt: L.fQ, exportarTipo: "inteiro", essencial: false },
     { id: "vv", titulo: "Venda " + L.META.meses_venda + " meses (R$)", tipo: "moedaInt", valor: function (x) { return x.vv; }, fmt: function (v) { return v ? L.fR(v) : "—"; }, exportarTipo: "moeda", barra: true, dica: "Venda faturada do produto nas regiões da tela (a lista começa pelo que mais vende)" },
     { id: "cad", titulo: "Cadastrado em", tipo: "texto", valor: function (x) { return P.cad[x.pi]; }, fmt: function (v) { return v >= 0 ? L.fDia(v) : "—"; }, exp: function (x) { return P.cad[x.pi] >= 0 ? L.fDia(P.cad[x.pi]) : ""; }, essencial: false },
   ];
