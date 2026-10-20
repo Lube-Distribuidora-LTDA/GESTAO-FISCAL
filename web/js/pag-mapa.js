@@ -7,13 +7,13 @@
 (function () {
 "use strict";
 var L = window.L;
-var MAIS = ["uf", "filialReg", "secao", "produto", "ncm", "trib", "estoque", "venda", "cadastro", "vendaReg"];
+var MAIS = ["uf", "filialReg", "produto", "ncm", "trib", "estoque", "venda", "cadastro", "vendaReg"];
 var est = { pag: 0, porPag: 50, busca: "", ord: "venda" };
 
 L.registrarPagina({
   id: "mapa", grupo: "Tributação e preço", menu: "Mapa produto × região", icone: "grade",
   titulo: "Mapa produto × região", olho: "Cada quadradinho é a situação do produto na região", semPeriodo: true,
-  filtros: ["regiao", "pendencia", "depto", "fornecedor", "situacaoProd"], mais: MAIS,
+  filtros: ["regiao", "pendencia", "depto", "fornecedor", "secao"], mais: MAIS,
   render: render,
 });
 

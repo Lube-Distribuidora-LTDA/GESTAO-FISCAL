@@ -190,7 +190,7 @@ function barrasProd(corpo, sel, dim, f0, n) {
 /* ============================ PRODUTO: por região ============================ */
 function abaProduto(ent, es) {
   var raiz = L.h("div"), P = L.P, R = L.R, C = L.C, T = L.T, pi = P.i.get(+ent.id);
-  if (pi == null) { raiz.appendChild(L.h("div", { class: "vazio", html: "<b>Produto fora do painel</b>O painel mostra só produtos de revenda não excluídos." })); return raiz; }
+  if (pi == null) { raiz.appendChild(L.h("div", { class: "vazio", html: "<b>Produto fora do painel</b>O painel mostra só produtos ativos: em linha, de revenda, fora do fornecedor INATIVOS e sem itens de consumo." })); return raiz; }
   // regiões da tela (os filtros de região valem; os de célula não: o relatório do produto mostra todas as regiões dele)
   var fR = {}; ["regiao", "uf", "filialReg"].forEach(function (k) { if (es.f[k]) fR[k] = es.f[k]; });
   var regs = L.filtrar({ f: fR }).regs, cels = Array.prototype.map.call(regs, function (ri) { return pi * R.n + ri; });

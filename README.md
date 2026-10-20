@@ -43,8 +43,12 @@ sem preço + sem os dois + fora da tabela.
 - **Regiões:** só as 16 que o Júlio pediu em 2026-10-20 — 18, 19, 23, 27, 31, 33, 35, 37, 38, 39, 40, 41, 42, 43, 45 e
   46. Ficam no `ENV` (`FISCAL_REGIOES`) e no banco (`fiscal.regiao.no_painel`). **A região 1 (Espírito Santo) não está
   na lista.**
-- **Produtos:** de revenda (`REVENDA <> 'N'`) e não excluídos — 7.277 em 2026-10-20. O de uso e consumo não tem preço
-  de venda por região e só encheria a lista de "sem preço". Fora de linha entra (filtro "Situação do produto").
+- **Produtos: só os ATIVOS** (pedido do Júlio em 2026-10-20: "apenas produtos ATIVOS e não todos, como: CONSUMO, INATIVOS
+  e etc.") — 5.318 em 2026-10-20. Ativo = não excluído, de revenda (`REVENDA <> 'N'`), **em linha** (`OBS2 <> 'FL'`, o "ATIVO"
+  dos outros BIs da casa), **fora do fornecedor "INATIVOS"** (cód. 658801) e **sem ser item de consumo** (descrição com
+  "CONSUMO" ou departamento 9 Material Consumo; e tipo de mercadoria preenchido). O `TIPOMERC = 'MC'` não serve de critério:
+  Guaraná Antarctica, Sukita e Água Tônica estão como MC e são de revenda, com venda. Regra e números em
+  `etl/consultas_fiscal.py` (`UNIVERSO`).
 - **Venda:** `CODOPER = 'S'` não cancelada dos últimos 12 meses, `QT × (PUNIT + VLOUTROS)`, todas as filiais (o que
   importa é a região de preço da venda).
 
@@ -74,7 +78,7 @@ INICIAR.bat  abre o painel nesta máquina (http://localhost:3103)
 |---|---|---|
 | `fato_preco_regiao` | a `PCTABPR` do universo (produto × região): CODST, preço de venda, preço de tabela, data e rotina da última alteração | TRUNCATE + INSERT |
 | `fato_venda_regiao` | venda faturada por produto × região (linhas, quantidade, valor, última venda) | TRUNCATE + INSERT |
-| `produto` | cadastro do universo, com NCM e estoque de hoje | TRUNCATE + INSERT |
+| `produto` | cadastro dos produtos ativos, com NCM e estoque de hoje | TRUNCATE + INSERT |
 | `regiao` | as 50 regiões do WinThor, com clientes por região e a marca `no_painel` | upsert |
 | `tributacao` | a `PCTRIBUT` inteira (798 códigos) | upsert |
 | `controle_carga` | um registro por passo de cada carga | — |
@@ -90,7 +94,10 @@ departamento, seção nem REVENDA: por isso o `fiscal.produto` próprio (exceç�
   e sem preço no banco e na `PCTABPR` — **na mesma transação de leitura do Oracle** (`SET TRANSACTION READ ONLY`), para
   um preço mudado na 201 durante a carga não virar alarme falso. 2026-10-20: igual nas 50 regiões (644.433 linhas) e,
   depois do recorte, nas 16 (116.432 linhas).
-- **Tela × banco:** 7.277 produtos, 6.686 com região sem tributação, 7.133 com região sem preço, 83.544 de 116.432
+- **Tela × banco, só ativos (2026-10-20, carga das 13:16):** 5.318 produtos, 4.811 com região sem tributação, 5.188 com região
+  sem preço, 1.603 com preço e sem tributação, 63.499 de 85.088 combinações completas — iguais à `fiscal.vw_situacao`; conferência
+  da carga igual à `PCTABPR` nas 16 regiões (85.088 linhas).
+- **Tela × banco, antes do recorte de ativos:** 7.277 produtos, 6.686 com região sem tributação, 7.133 com região sem preço, 83.544 de 116.432
   combinações completas — iguais à consulta em `fiscal.vw_situacao`.
 - **Tela × WinThor, produto a produto:** cód. 15722 (Coca-Cola Zero lata) nas 16 regiões: CODST e preço iguais à
   `PCTABPR`.

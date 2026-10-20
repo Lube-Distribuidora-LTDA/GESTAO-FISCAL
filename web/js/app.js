@@ -40,7 +40,7 @@ function rodape() {
   L.$("menu-rodape").innerHTML =
     '<div><span class="vivo"></span><b>Preço e tributação de ' + L.esc(L.fDataHora(M.carga || M.gerado_em)) + "</b></div>" +
     "<div>Venda: últimos " + L.esc(M.meses_venda) + " meses" + (L.NOVA_CARGA ? " · <b>há carga nova: clique em Atualizar</b>" : L.ORIGEM === "copia" ? " · cópia deste computador, conferindo…" : L.ORIGEM === "copia-ok" ? " · cópia deste computador (a mais recente)" : L.ORIGEM === "offline" ? " · <b>sem conexão</b>" : "") + "</div>" +
-    "<div>" + L.fInt(L.P.n) + " produtos de revenda · " + L.R.n + " regiões</div>" +
+    "<div>" + L.fInt(L.P.n) + " produtos ativos · " + L.R.n + " regiões</div>" +
     '<div class="versao">versão ' + L.esc(window.VERSAO || "") + "</div>";
 }
 function marcarMenu() { document.querySelectorAll(".item-menu").forEach(function (b) { b.classList.toggle("ativo", b.dataset.p === L.estado.pagina); }); }

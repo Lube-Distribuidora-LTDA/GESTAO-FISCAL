@@ -7,7 +7,7 @@
  *
  * Estruturas (todas em L):
  *   L.R   regiões escolhidas (as do ENV FISCAL_REGIOES)
- *   L.P   produtos de revenda não excluídos
+ *   L.P   produtos ativos (em linha, de revenda, fora do fornecedor INATIVOS, sem itens de consumo)
  *   L.C   a matriz produto × região: célula c = pi * L.R.n + ri
  *         s  situação (0 completo, 1 sem tributação, 2 sem preço, 3 sem os dois, 4 fora da tabela)
  *         st CODST da região (0 = sem) · pv preço de venda (0 = sem)
@@ -374,7 +374,7 @@ L.celRi = function (c) { return c % L.R.n; };
 L.descricaoFiltros = function (extra) {
   var out = [], f = L.estado.filtros;
   out.push(["Posição", "preço e tributação da carga de " + L.fDataHora(L.META.carga || L.META.gerado_em)]);
-  out.push(["Universo", "produtos de revenda não excluídos × " + L.R.n + " regiões escolhidas"]);
+  out.push(["Universo", "produtos ativos (em linha, de revenda, fora do fornecedor INATIVOS e sem itens de consumo) × " + L.R.n + " regiões escolhidas"]);
   Object.keys(f).forEach(function (k) {
     var a = f[k]; if (!a || !a.length || !L.DIM[k]) return;
     var nomes = a.map(function (id) { return L.nomeDe(k, id); });

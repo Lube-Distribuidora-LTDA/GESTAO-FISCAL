@@ -93,7 +93,7 @@ def main() -> int:
             tem_p = bool(pvenda and pvenda > 0)
             cel[(codprod, reg)] = 0 if tem_t and tem_p else 1 if tem_p else 2 if tem_t else 3
     log.info("")
-    log.info("SITUACAO DE HOJE · %s produtos de revenda nao excluidos", _f(len(prods)))
+    log.info("SITUACAO DE HOJE · %s produtos ativos", _f(len(prods)))
     log.info("%-6s %-38s %-6s %9s %9s %9s %9s %9s %10s", "REG", "NOME", "ATIVA", "COMPLETO", "SEM TRIB", "SEM PRECO",
              "OS DOIS", "FORA TAB", "VENDA 12M")
     for num in regioes_painel():

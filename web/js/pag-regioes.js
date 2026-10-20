@@ -6,7 +6,7 @@
 (function () {
 "use strict";
 var L = window.L;
-var MAIS = ["filialReg", "secao", "produto", "ncm", "trib", "situacaoProd", "estoque", "venda", "cadastro", "vendaReg"];
+var MAIS = ["filialReg", "secao", "produto", "ncm", "trib", "estoque", "venda", "cadastro", "vendaReg"];
 
 L.registrarPagina({
   id: "regioes", grupo: "Tributação e preço", menu: "Regiões", icone: "pino",
@@ -53,7 +53,7 @@ function render(raiz) {
       return [{ rot: "Regiões", valor: String(l.length), pri: true }, { rot: "Sem tributação", valor: L.fInt(s[1] + s[3] + s[4]) }, { rot: "Sem preço", valor: L.fInt(s[2] + s[3] + s[4]) }, { rot: "Completos", valor: L.fInt(s[0]) }]; },
     aoClicar: function (x, ev) { L.clique("regiao", R.num[x.ri], ev); },
   });
-  raiz.appendChild(L.grade(L.painel({ titulo: "Cada região", sub: "produtos de revenda (com os filtros da tela) · venda dos últimos " + L.META.meses_venda + " meses · clique para abrir", classe: "c-12", semPad: true, corpo: tab })));
+  raiz.appendChild(L.grade(L.painel({ titulo: "Cada região", sub: "produtos ativos (com os filtros da tela) · venda dos últimos " + L.META.meses_venda + " meses · clique para abrir", classe: "c-12", semPad: true, corpo: tab })));
   raiz.appendChild(L.nota("Regiões escolhidas no ENV da carga (FISCAL_REGIOES): " + Array.prototype.map.call(R.num, String).join(", ") + ". Cliente ativo = não excluído e não bloqueado, na região própria do cliente ou na da praça dele (rotina 302). \"Sem tributação\" e \"sem preço\" no total incluem os produtos sem os dois e os fora da tabela."));
 }
 

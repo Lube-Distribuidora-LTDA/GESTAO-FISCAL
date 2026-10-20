@@ -9,12 +9,12 @@
 (function () {
 "use strict";
 var L = window.L;
-var MAIS = ["uf", "filialReg", "secao", "produto", "ncm", "trib", "estoque", "venda", "cadastro", "vendaReg"];
+var MAIS = ["uf", "filialReg", "produto", "ncm", "trib", "estoque", "venda", "cadastro", "vendaReg"];
 
 L.registrarPagina({
   id: "produtos", grupo: "Tributação e preço", menu: "Produtos", icone: "tabela",
   titulo: "Produtos sem tributação ou sem preço", olho: "Código · descrição · regiões sem tributação · regiões sem preço de venda", semPeriodo: true,
-  filtros: ["regiao", "pendencia", "depto", "fornecedor", "situacaoProd"], mais: MAIS,
+  filtros: ["regiao", "pendencia", "depto", "fornecedor", "secao"], mais: MAIS,
   render: render,
 });
 
@@ -22,7 +22,7 @@ function render(raiz) {
   var sel = L.filtrar(L.spec()), modo = L.estado.pend || "com";
   var linhas = L.porProduto(sel, modo === "com"), r = L.resumo(sel);
   raiz.appendChild(L.kpis(
-    L.kpi({ icone: "caixa", rot: modo === "com" ? "Produtos com pendência" : "Produtos na lista", valor: linhas.length, fmt: L.fInt, classe: "heroi", leg: L.h("span", { text: "de " + L.fInt(r.prod) + " produtos de revenda · " + r.reg + " regiões" }) }),
+    L.kpi({ icone: "caixa", rot: modo === "com" ? "Produtos com pendência" : "Produtos na lista", valor: linhas.length, fmt: L.fInt, classe: "heroi", leg: L.h("span", { text: "de " + L.fInt(r.prod) + " produtos ativos · " + r.reg + " regiões" }) }),
     L.kpi({ icone: "percent", rot: "Com região sem tributação", valor: r.prodSemTrib, fmt: L.fInt, classe: r.prodSemTrib ? "perigo" : "zero", leg: L.h("span", { text: L.fInt(r.celSemTrib) + " regiões · " + L.fInt(r.porSit[1]) + " com preço" }) }),
     L.kpi({ icone: "etiqueta", rot: "Com região sem preço de venda", valor: r.prodSemPreco, fmt: L.fInt, classe: r.prodSemPreco ? "atencao" : "zero", leg: L.h("span", { text: L.fInt(r.celSemPreco) + " regiões · " + L.fInt(r.porSit[2]) + " com tributação" }) }),
     L.kpi({ icone: "verificar", rot: "Completos em todas as regiões", valor: r.prodCompleto, fmt: L.fInt, classe: "ok", leg: L.h("span", { text: L.fPct(r.prod ? r.prodCompleto / r.prod : null, 1) + " dos produtos" }) })));

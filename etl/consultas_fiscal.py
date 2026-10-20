@@ -47,9 +47,9 @@ Recortes (no ENV):
     FISCAL_MESES_VENDA=12                 janela da venda por produto x regiao
     FISCAL_FILIAIS_ESTOQUE=1,7,10,11,12   filiais somadas no estoque (as de distribuicao)
 
-Universo: produtos DE REVENDA e NAO EXCLUIDOS (o de uso e consumo, REVENDA = 'N', nao
-tem preco de venda por regiao e so encheria a lista de "sem preco") x as regioes
-escolhidas. Produto, preco e venda vem so do universo (fiscal.produto e TRUNCATE +
+Universo: produtos ATIVOS (nao excluidos, de revenda, em linha, fora do fornecedor
+"INATIVOS" e sem ser item de consumo; criterios e numeros em UNIVERSO, abaixo) x as
+regioes escolhidas. Produto, preco e venda vem so do universo (fiscal.produto e TRUNCATE +
 INSERT: produto que sai do universo sai da tabela junto); regiao e tributacao vem
 inteiras (sao pequenas; a regiao leva a marca no_painel).
 """
@@ -238,8 +238,25 @@ def _mapear_preco(r: dict[str, Any]) -> tuple:
 # ---------------------------------------------------------------------------
 # Catalogo
 # ---------------------------------------------------------------------------
-# produto de revenda nao excluido (REVENDA nulo conta como de revenda, padrao do WinThor)
-UNIVERSO = "P.DTEXCLUSAO IS NULL AND NVL(P.REVENDA, 'S') <> 'N'"
+# So produto ATIVO (pedido do Julio em 2026-10-20: "apenas produtos ATIVOS e nao todos, como:
+# CONSUMO, INATIVOS e etc."). Cada criterio, e o que ele tirou em 2026-10-20 (dos 7.277 de revenda):
+#   1. nao excluido (DTEXCLUSAO vazia)
+#   2. de revenda (REVENDA <> 'N'; nulo conta como revenda, padrao do WinThor)
+#   3. em linha: OBS2 <> 'FL' -- e o "ATIVO" dos outros BIs da casa (COMPRAS, COMERCIAL, TRADE); tirou 1.864
+#   4. fora do fornecedor "INATIVOS" (cod. 658801), onde a Lube guarda o que saiu de linha; tirou mais 26
+#   5. nao e consumo: descricao sem "CONSUMO" ("... (CONSUMO)", "(LUBE-CONSUMO)") e fora do departamento
+#      9 MATERIAL CONSUMO; tirou 66 itens, nenhum com venda em 12 meses
+#   6. com tipo de mercadoria preenchido (TIPOMERC): tirou 3 sem tipo (copiadora, cadeiras, tecido), sem venda
+#      nem estoque
+# O TIPOMERC = 'MC' (material de consumo) NAO serve de criterio: o Guarana Antarctica, a Sukita e a Agua
+# Tonica estao cadastrados como MC e sao de revenda, com venda -- filtrar por ele esconderia produto vendido.
+FORNEC_INATIVOS = int((os.environ.get("FISCAL_FORNEC_INATIVOS") or "658801").strip() or "658801")
+DEPTO_CONSUMO = int((os.environ.get("FISCAL_DEPTO_CONSUMO") or "9").strip() or "9")
+UNIVERSO = (
+    "P.DTEXCLUSAO IS NULL AND NVL(P.REVENDA, 'S') <> 'N' AND NVL(P.OBS2, ' ') <> 'FL'"
+    f" AND NVL(P.CODFORNEC, 0) <> {FORNEC_INATIVOS} AND NVL(P.CODEPTO, 0) <> {DEPTO_CONSUMO}"
+    " AND UPPER(P.DESCRICAO) NOT LIKE '%CONSUMO%' AND P.TIPOMERC IS NOT NULL"
+)
 
 
 def _montar() -> list[Consulta]:
