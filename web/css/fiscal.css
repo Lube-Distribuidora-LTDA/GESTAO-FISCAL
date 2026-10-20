@@ -72,6 +72,7 @@ table.tabela.mapa tfoot td.f1 { font: 800 11px var(--f-txt); letter-spacing: .08
 .q.s3 { --cq: var(--d3); }
 .q.s4 { --cq: color-mix(in srgb, var(--d8) 55%, var(--s3)); color: var(--t2); }
 .q.vendeu { box-shadow: 0 0 0 2px var(--ouro); }
+:root[data-tema="claro"] .chip-reg.s2, :root[data-tema="claro"] .q.s2 { color: #fff; }
 
 /* ------------------------------ cartões: seis numa linha sem cortar o número ------------------------------ */
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); }
