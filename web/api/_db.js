@@ -28,15 +28,21 @@ const ESCALONAR_MS = Number(process.env.DB_ESCALONAR_MS || 4000);
 const MAX_TENTATIVAS = Number(process.env.DB_MAX_TENTATIVAS || 3);
 const TEMPO_POR_TENTATIVA_MS = Number(process.env.DB_TEMPO_TENTATIVA_MS || 14000);
 
+/* valor colado na tela da Vercel costuma vir com espaço nas pontas ou com as aspas do ENV:
+   apara, como o ETL em Python já faz (2026-10-20: o banco respondeu "user not found") */
+function limpo(v) { return String(v == null ? "" : v).trim().replace(/^"(.*)"$/, "$1").trim(); }
+const USUARIO_ESPERADO = "postgres." + REF_ESPERADO;
+
 function configuracao() {
-  const usuario = process.env.SUPABASE_DB_USER || "";
-  if (!usuario.endsWith(REF_ESPERADO)) throw new Error("SUPABASE_DB_USER aponta para outro projeto (esperado ..." + REF_ESPERADO + ")");
+  const usuario = limpo(process.env.SUPABASE_DB_USER);
+  // o nome de usuário não é segredo: se vier diferente, a mensagem diz exatamente o que chegou
+  if (usuario !== USUARIO_ESPERADO) throw new Error("SUPABASE_DB_USER deveria ser " + JSON.stringify(USUARIO_ESPERADO) + " e está " + JSON.stringify(usuario) + " — corrija em Settings › Environment Variables e faça o Redeploy");
   return {
-    host: process.env.SUPABASE_DB_HOST || "aws-0-sa-east-1.pooler.supabase.com",
-    port: Number(process.env.SUPABASE_DB_PORT || 5432),
-    database: process.env.SUPABASE_DB_NAME || "postgres",
+    host: limpo(process.env.SUPABASE_DB_HOST) || "aws-0-sa-east-1.pooler.supabase.com",
+    port: Number(limpo(process.env.SUPABASE_DB_PORT) || 5432),
+    database: limpo(process.env.SUPABASE_DB_NAME) || "postgres",
     user: usuario,
-    password: process.env.SUPABASE_DB_PASSWORD,
+    password: limpo(process.env.SUPABASE_DB_PASSWORD),
     ssl: { rejectUnauthorized: false },
     connectionTimeoutMillis: TEMPO_POR_TENTATIVA_MS,
     statement_timeout: 40000,
@@ -100,6 +106,11 @@ function semConfiguracao(res) {
 }
 function erroBanco(res, e) {
   console.error("Falha ao consultar o DATA WAREHOUSE:", e && e.message || e);
+  if (/EAUTHQUERY|not found|password authentication/i.test(String(e && e.message || ""))) {
+    // usuário e host não são segredo; a senha nunca vai para o log, só o tamanho dela
+    console.error("Conferir variáveis: usuario=" + JSON.stringify(limpo(process.env.SUPABASE_DB_USER)) + " host=" + JSON.stringify(limpo(process.env.SUPABASE_DB_HOST)) +
+                  " porta=" + JSON.stringify(limpo(process.env.SUPABASE_DB_PORT)) + " banco=" + JSON.stringify(limpo(process.env.SUPABASE_DB_NAME)) + " senha_com=" + limpo(process.env.SUPABASE_DB_PASSWORD).length + "_caracteres");
+  }
   json(res, 502, { erro: "falha_no_banco", mensagem: "Não consegui ler o DATA WAREHOUSE agora. Tente de novo em instantes; persistindo, avise o TI.", detalhe: String(e && e.message ? e.message : e) });
 }
 
