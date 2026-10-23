@@ -43,8 +43,7 @@ sem preço + sem os dois + fora da tabela.
 - **Regiões:** as 11 que o Júlio escolheu — 1, 18, 19, 23, 31, 33, 35, 37, 38, 42 e 43 (em 2026-10-20 eram 16, sem a 1; em
   2026-10-23 saíram 39, 41, 45 e 46, depois 27 e 40, e entrou a 1). **A lista mora no banco** (`fiscal.config`, chave `regioes`) e a carga
   lê a cada rodada: trocar região é um `UPDATE`, sem mexer na VM. Sem a linha, vale `FISCAL_REGIOES` do ENV e, por último, o
-  padrão do código. Ficam no `ENV` (`FISCAL_REGIOES`) e no banco (`fiscal.regiao.no_painel`). **A região 1 (Espírito Santo) não está
-  na lista.**
+  padrão do código. A marca de cada região fica em `fiscal.regiao.no_painel`.
 - **Produtos: só os ATIVOS** (pedido do Júlio em 2026-10-20: "apenas produtos ATIVOS e não todos, como: CONSUMO, INATIVOS
   e etc.") — 5.318 em 2026-10-20. Ativo = não excluído, de revenda (`REVENDA <> 'N'`), **em linha** (`OBS2 <> 'FL'`, o "ATIVO"
   dos outros BIs da casa), **fora do fornecedor "INATIVOS"** (cód. 658801) e **sem ser item de consumo** (descrição com
@@ -137,7 +136,8 @@ carga atrasar, a seguinte é pulada (`IgnoreNew`, limite de 25 min por carga). _
 
 ## Vercel
 
-Projeto `gestao-fiscal` (`prj_YF4fRNaCEaKmEmjbVTN5ZIpUTjMl`), **https://gestao-fiscal.vercel.app**, ligado a este
+Projeto `gestao-fiscal` (`prj_YF4fRNaCEaKmEmjbVTN5ZIpUTjMl`), **https://gestao-fiscal-olive.vercel.app** (o
+`gestao-fiscal.vercel.app` é de outra conta), ligado a este
 repositório (push na `main` publica sozinho). Root Directory `web`, Framework Other, sem build, região `gru1`, Node 22.x,
 Vercel Authentication Standard. Variáveis (cadastradas pelo Júlio, Production, Sensitive, porta **5432**):
 `SUPABASE_DB_HOST`, `SUPABASE_DB_PORT`, `SUPABASE_DB_NAME`, `SUPABASE_DB_USER`, `SUPABASE_DB_PASSWORD`. Guarda da
