@@ -216,7 +216,7 @@ var ctxTexto;
 var cacheMedida = {};
 L.medir = function (texto, tam, peso, familia) {
   ctxTexto = ctxTexto || document.createElement("canvas").getContext("2d");
-  var fam = familia || '"JetBrains Mono", Consolas, monospace';
+  var fam = familia || '"IBM Plex Sans", "Segoe UI", sans-serif';
   var chave = tam + "|" + peso + "|" + fam + "|" + texto;
   var v = cacheMedida[chave];
   if (v == null) {

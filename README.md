@@ -40,8 +40,8 @@ sem preço + sem os dois + fora da tabela.
 
 ## Universo (decisões)
 
-- **Regiões:** só as 16 que o Júlio pediu em 2026-10-20 — 18, 19, 23, 27, 31, 33, 35, 37, 38, 39, 40, 41, 42, 43, 45 e
-  46. Ficam no `ENV` (`FISCAL_REGIOES`) e no banco (`fiscal.regiao.no_painel`). **A região 1 (Espírito Santo) não está
+- **Regiões:** só as 12 que o Júlio escolheu — 18, 19, 23, 27, 31, 33, 35, 37, 38, 40, 42 e 43 (em 2026-10-20 eram 16; em
+  2026-10-23 saíram as de transferência 39, 41, 45 e 46). Ficam no `ENV` (`FISCAL_REGIOES`) e no banco (`fiscal.regiao.no_painel`). **A região 1 (Espírito Santo) não está
   na lista.**
 - **Produtos: só os ATIVOS** (pedido do Júlio em 2026-10-20: "apenas produtos ATIVOS e não todos, como: CONSUMO, INATIVOS
   e etc.") — 5.318 em 2026-10-20. Ativo = não excluído, de revenda (`REVENDA <> 'N'`), **em linha** (`OBS2 <> 'FL'`, o "ATIVO"
@@ -112,7 +112,8 @@ Telas: **Visão geral** (cartões, situação por região, departamentos e forne
 colorido que abre a região) · **Mapa produto × região** (a matriz colorida, com a tributação e o preço na dica) ·
 **Regiões** (pendências, clientes e venda de cada uma).
 
-No padrão da casa: filtros de múltipla escolha com busca (vazio = todos), **todo clique abre o relatório do recorte**
+No padrão da casa, com uma exceção: **os números usam a IBM Plex Sans**, de zero sem ponto (desde 2026-10-23; o Fiscal
+confundia o 0 com ponto da JetBrains Mono com o 8), com algarismos de largura igual. Filtros de múltipla escolha com busca (vazio = todos), **todo clique abre o relatório do recorte**
 (produto: região a região com CODST, CST, ICMS, CFOP e preço; região: produtos com pendência; Voltar; Ctrl+clique
 filtra), foto do produto, Excel formatado com os filtros escritos, link da visão, tema claro/escuro, modo apresentação.
 

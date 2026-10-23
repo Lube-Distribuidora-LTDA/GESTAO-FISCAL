@@ -24,7 +24,9 @@
   --placa: #fff;
   --f-tit: "Archivo", "Segoe UI", system-ui, sans-serif;
   --f-txt: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  --f-num: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+  /* numeros: IBM Plex Sans, zero sem ponto (pedido do Julio em 2026-10-23: o Fiscal confundia o 0 da JetBrains Mono,
+     com o ponto no meio, com o 8). Algarismos de largura igual pelo "tnum", ligado no html. */
+  --f-num: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --raio: 16px; --raio-p: 10px;
   --menu-w: 268px;
 }
@@ -58,7 +60,10 @@ body {
 h1, h2, h3, h4, p { margin: 0; }
 button { font: inherit; color: inherit; cursor: pointer; }
 a { color: var(--azul-lt); }
-.num, .mono { font-family: var(--f-num); font-variant-numeric: tabular-nums; font-feature-settings: "zero" 0; }
+/* algarismos de largura igual em tudo (cartões, tabelas, chips e o texto dos gráficos), para os números ficarem
+   alinhados em coluna: com !important porque o atalho "font:" de cada regra zera o font-variant-numeric */
+*, *::before, *::after { font-variant-numeric: tabular-nums !important; }
+.num, .mono { font-family: var(--f-num); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
 svg { display: block; }
 :focus-visible { outline: 2px solid var(--ouro); outline-offset: 2px; border-radius: 6px; }
 ::-webkit-scrollbar { width: 10px; height: 10px; }

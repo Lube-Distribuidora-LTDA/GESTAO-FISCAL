@@ -16,7 +16,7 @@
 "use strict";
 var L = window.L, G = L.graf = {};
 
-var FONTE_N = '"JetBrains Mono", Consolas, monospace';
+var FONTE_N = '"IBM Plex Sans", "Segoe UI", sans-serif';
 
 function ligar(box, cfg) {
   box.classList.add("graf");
