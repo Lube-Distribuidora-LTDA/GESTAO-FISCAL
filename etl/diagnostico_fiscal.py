@@ -34,6 +34,8 @@ def main() -> int:
     from consultas_fiscal import catalogo, filiais_estoque, meses_venda, regioes_painel, sql_conferencia
 
     cfg_ora = bi.OracleConfig.from_env()
+    from consultas_fiscal import regioes_do_banco
+    regioes_do_banco(bi.SupabaseConfig.from_env(), log)     # a mesma lista de regioes que a carga usa
     log.info("Regioes do painel: %s · venda dos ultimos %s meses · estoque das filiais %s", regioes_painel(), meses_venda(), filiais_estoque())
     problemas = 0
     with bi.conectar_oracle(cfg_ora) as conn:

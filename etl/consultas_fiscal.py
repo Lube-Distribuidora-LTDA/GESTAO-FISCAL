@@ -42,8 +42,11 @@ dois) NAO e calculada aqui: ela mora no banco (fiscal.vw_situacao e
 fiscal.painel_dados()). Mudar a regra nao exige carga.
 
 Recortes (no ENV):
-    FISCAL_REGIOES=18,19,23,...           as regioes que o painel mostra (padrao: as 12 que o Julio
-                                          escolheu; a regiao 1 ficou de fora no pedido)
+    FISCAL_REGIOES=18,19,23,...           as regioes que o painel mostra, se o banco nao disser (ver abaixo)
+
+A LISTA DE REGIOES MORA NO BANCO desde 2026-10-23: fiscal.config, chave 'regioes' (ex.: 18,19,23,...). A
+carga le no comeco de cada rodada (regioes_do_banco), entao trocar regiao NAO exige mexer na VM. Sem a linha
+(ou sem banco), vale FISCAL_REGIOES do ENV e, por ultimo, o REGIOES_PADRAO abaixo.
     FISCAL_MESES_VENDA=12                 janela da venda por produto x regiao
     FISCAL_FILIAIS_ESTOQUE=1,11,12        filiais onde o produto precisa ter estoque para entrar, e que
                                           somam o estoque mostrado (pedido do Julio em 2026-10-20)
@@ -67,13 +70,35 @@ from bi_comum import Consulta, inteiro, texto
 FILIAIS_PADRAO = "1,11,12"
 # Pedido do Julio em 2026-10-20: "eu preciso de apenas algumas regioes".
 # Em 2026-10-23 o Julio tirou as regioes 39, 41, 45 e 46 (as de transferencia LUBE01->LUBE12, SOMAR=>LUBE BA,
-# LUBE12->LUBE01 e LUBE ES->LUBE BA): "preciso retirar tambem algumas regioes do sistema".
-REGIOES_PADRAO = "18,19,23,27,31,33,35,37,38,40,42,43"
+# LUBE12->LUBE01 e LUBE ES->LUBE BA) e, no mesmo dia, a 27 (SOMAR => ESPIRITO SANTO) e a 40 (LUBE MTZ => SOMAR).
+# E so o padrao de reserva: quem manda e o banco (fiscal.config "regioes").
+REGIOES_PADRAO = "18,19,23,31,33,35,37,38,42,43"
 
 
 def regioes_painel() -> list[int]:
     bruto = (os.environ.get("FISCAL_REGIOES") or REGIOES_PADRAO).strip() or REGIOES_PADRAO
     return sorted({int(x) for x in bruto.split(",") if x.strip()})
+
+
+def regioes_do_banco(cfg_pg, log) -> None:
+    """Le a lista de regioes de fiscal.config ('regioes') e a poe em FISCAL_REGIOES para esta rodada.
+    Se o banco nao responder ou a linha nao existir, fica o ENV/padrao e a carga segue (avisa no log)."""
+    from bi_comum import conectar_supabase
+    try:
+        with conectar_supabase(cfg_pg) as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT valor FROM fiscal.config WHERE chave = 'regioes'")
+                linha = cur.fetchone()
+            conn.rollback()
+        valor = (linha[0] if linha else "").strip()
+        if valor:
+            [int(x) for x in valor.split(",") if x.strip()]          # so numeros: nada de texto livre no SQL
+            os.environ["FISCAL_REGIOES"] = valor
+            log.info("Regioes lidas do banco (fiscal.config): %s", valor)
+        else:
+            log.warning("fiscal.config sem a chave 'regioes': uso o ENV/padrao (%s).", ",".join(map(str, regioes_painel())))
+    except Exception as exc:  # noqa: BLE001
+        log.warning("Nao consegui ler as regioes do banco (%s): uso o ENV/padrao (%s).", exc, ",".join(map(str, regioes_painel())))
 
 
 def _in_regiao(coluna: str) -> str:

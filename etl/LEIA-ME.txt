@@ -10,8 +10,8 @@ DATA WAREHOUSE, schema "fiscal" -> painel na Vercel.
 
 Universo: produtos ATIVOS (em linha, de revenda, fora do fornecedor INATIVOS e sem
 itens de consumo) COM ESTOQUE nas filiais 1, 11 ou 12 x as regioes escolhidas pelo Julio
-(18, 19, 23, 27, 31, 33, 35, 37, 38, 40, 42, 43). Para mudar as
-regioes, edite FISCAL_REGIOES no ENV e rode o ATUALIZAR AGORA.bat.
+(18, 19, 23, 31, 33, 35, 37, 38, 42, 43). A lista mora no BANCO (fiscal.config,
+chave 'regioes') e a carga le a cada rodada: trocar regiao nao exige mexer na VM.
 
 Pastas
   1 - CONFIGURACAO        o ENV (senhas do Oracle e do Supabase) e o ENV.example

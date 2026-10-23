@@ -165,6 +165,10 @@ def main() -> int:
         log.error("Configuracao invalida: %s", exc)
         return 1
 
+    # a lista de regioes mora no banco (fiscal.config): trocar regiao nao exige mexer na VM
+    from consultas_fiscal import regioes_do_banco
+    regioes_do_banco(cfg_pg, log)
+
     consultas = [] if args.so_pacote else selecionar(args.consulta)
     if consultas:
         log.info("Vou rodar %d consulta(s): %s", len(consultas), ", ".join(c.nome for c in consultas))
