@@ -71,8 +71,9 @@ FILIAIS_PADRAO = "1,11,12"
 # Pedido do Julio em 2026-10-20: "eu preciso de apenas algumas regioes".
 # Em 2026-10-23 o Julio tirou as regioes 39, 41, 45 e 46 (as de transferencia LUBE01->LUBE12, SOMAR=>LUBE BA,
 # LUBE12->LUBE01 e LUBE ES->LUBE BA) e, no mesmo dia, a 27 (SOMAR => ESPIRITO SANTO) e a 40 (LUBE MTZ => SOMAR).
+# Ainda em 2026-10-23 o Julio incluiu a regiao 1 (ESPIRITO SANTO).
 # E so o padrao de reserva: quem manda e o banco (fiscal.config "regioes").
-REGIOES_PADRAO = "18,19,23,31,33,35,37,38,42,43"
+REGIOES_PADRAO = "1,18,19,23,31,33,35,37,38,42,43"
 
 
 def regioes_painel() -> list[int]:
