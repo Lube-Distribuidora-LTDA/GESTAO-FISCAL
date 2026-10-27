@@ -99,30 +99,13 @@ L.kpi = function (cfg) {
 };
 L.kpis = function () { var g = L.h("div", { class: "kpis" }); for (var i = 0; i < arguments.length; i++) L.add(g, arguments[i]); return g; };
 
-/* esperas: o caminhão da Lube rodando, com painéis caindo no baú. Desde 2026-10-27 é a foto do portal
-   (caminhao-lube.webp, a mesma da abertura do Painel Lube e do vídeo do Lube Online), com os cubos das rodas
-   girando; o desenho antigo fica de reserva, se a foto não carregar. Os painéis ficam ATRÁS do caminhão, então
-   ao descer eles somem para dentro do baú. */
+/* esperas: o caminhão da Lube (o mesmo desenho do portal) rodando, com painéis caindo no baú.
+   Os painéis ficam ATRÁS do baú no desenho, então ao descer eles somem para dentro dele. */
 var camUid = 0;
-// a foto: 1200 × 486, pneus no chão em y = 484; centro de cada cubo e o raio do recorte que gira (pixels da foto)
-var CAM_FOTO = { src: "caminhao-lube.webp", larg: 1200, alt: 486, chao: 484, rodas: [[370, 421], [525, 421], [1014.5, 421.5]], cubo: 33 };
-function caminhaoFoto(u) {
-  // ocupa x 43 a 623 (a largura do desenho antigo), com os pneus encostados na estrada (y 284)
-  var f = CAM_FOTO, w = 580, s = w / f.larg, x0 = 43, y0 = 284 - f.chao * s;
-  var img = '<image href="' + f.src + '" x="' + x0 + '" y="' + y0.toFixed(1) + '" width="' + w + '" height="' + (f.alt * s).toFixed(1) + '"/>';
-  var quieto = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  // cada cubo: a mesma foto, recortada num círculo em volta dele e girando em torno do centro
-  var cubos = f.rodas.map(function (r, i) {
-    var cx = (x0 + r[0] * s).toFixed(1), cy = (y0 + r[1] * s).toFixed(1), id = u + "r" + i;
-    return '<clipPath id="' + id + '"><circle cx="' + cx + '" cy="' + cy + '" r="' + (f.cubo * s).toFixed(1) + '"/></clipPath>' +
-      '<g clip-path="url(#' + id + ')"><g>' + img + (quieto ? "" :
-        '<animateTransform attributeName="transform" type="rotate" from="0 ' + cx + " " + cy + '" to="360 ' + cx + " " + cy + '" dur=".5s" repeatCount="indefinite"/>') + "</g></g>";
-  }).join("");
-  return '<ellipse cx="333" cy="283" rx="262" ry="8" fill="rgba(0,0,0,.35)"/>' +
-    '<g class="cam-corpo">' + img.replace("<image ", '<image class="cam-foto" ') + cubos + "</g>";
-}
-function caminhaoDesenho(u) {
-  var N = "#1E2B8C", R = "#EE1B24", C = "#00A0E9";
+/* foto = true: o caminhão é a foto do painel corporativo (a mesma do vídeo do Lube Online: caminhao-lube.webp);
+   foto = false: o desenho em SVG, só de reserva se a foto não carregar. */
+function caminhaoSVG(foto) {
+  var N = "#1E2B8C", R = "#EE1B24", C = "#00A0E9", u = "cam" + (++camUid);
   var marca = '<g transform="translate(20,0) skewX(-10)"><path fill="NAVY" d="M24 6h34v56h42c6 0 10 4 10 10v12c0 10-8 18-18 18H24C12 102 4 94 4 82V26C4 14 12 6 24 6Z"/><path fill="RED" d="M68 6h36c6 0 10 4 10 10v32c0 3-2 4-5 4H68Z"/></g>';
   var m = function (navy) { return marca.replace("NAVY", navy).replace("RED", R); };
   var listras = ""; for (var i = 0; i < 9; i++) listras += '<rect x="' + (34 + i * 44) + '" y="185" width="24" height="9" fill="' + (i % 2 ? R : "#FFFFFF") + '"/>';
@@ -131,8 +114,28 @@ function caminhaoDesenho(u) {
       '<g class="cam-raio"><path d="M' + (cx - 14) + " 203H" + (cx + 14) + "M" + (cx - 7) + " 191L" + (cx + 7) + " 215M" + (cx - 7) + " 215L" + (cx + 7) + ' 191" stroke="#5B6577" stroke-width="3" stroke-linecap="round" fill="none"/></g>' +
       '<circle cx="' + cx + '" cy="203" r="5" fill="#3b4558"/>';
   }).join("");
-  return '<defs><linearGradient id="' + u + 'b" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3BC4F9"/><stop offset="55%" stop-color="' + C + '"/><stop offset="100%" stop-color="#0084C6"/></linearGradient>' +
+  // painel pequeno (cartão com barras e uma linha); x = onde cai, d = atraso, h = alturas das barras
+  var painel = function (x, d, h) {
+    return '<g transform="translate(' + x + ',0)"><g class="cam-painel" style="--d:' + d + 's">' +
+      '<rect width="96" height="62" rx="9" style="fill:var(--s2);stroke:var(--ouro);stroke-width:1.6"/>' +
+      '<rect x="9" y="9" width="34" height="5" rx="2.5" style="fill:var(--ouro)"/>' +
+      '<rect x="10" y="' + (52 - h[0]) + '" width="10" height="' + h[0] + '" rx="2" style="fill:var(--azul-lt)"/>' +
+      '<rect x="24" y="' + (52 - h[1]) + '" width="10" height="' + h[1] + '" rx="2" style="fill:var(--ouro)"/>' +
+      '<rect x="38" y="' + (52 - h[2]) + '" width="10" height="' + h[2] + '" rx="2" style="fill:var(--verm-lt)"/>' +
+      '<path d="M56 46L66 36L76 40L87 22" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--azul-lt)"/></g></g>';
+  };
+  var pulso = function (x, d) { return '<ellipse class="cam-pulso" cx="' + x + '" cy="' + (foto ? 44 : 64) + '" rx="34" ry="6" fill="none" stroke-width="2" style="stroke:var(--ouro);--d:' + d + 's"/>'; };
+  return '<svg viewBox="0 -96 700 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Caminhão da Lube carregando os painéis">' +
+    '<defs><linearGradient id="' + u + 'b" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3BC4F9"/><stop offset="55%" stop-color="' + C + '"/><stop offset="100%" stop-color="#0084C6"/></linearGradient>' +
     '<linearGradient id="' + u + 'c" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="70%" stop-color="#F0F3F8"/><stop offset="100%" stop-color="#C9D2E0"/></linearGradient></defs>' +
+    // estrada: faixa escura com a pontilhada correndo para trás
+    '<rect x="0" y="281" width="700" height="24" rx="8" fill="#0c1530" opacity=".85"/>' +
+    '<line class="cam-estrada" x1="0" y1="293" x2="700" y2="293" stroke-width="3" stroke-dasharray="30 22" stroke-linecap="round" style="stroke:var(--ouro)"/>' +
+    // painéis caindo (atrás do caminhão)
+    '<g transform="translate(0,0)">' + painel(110, 0, [16, 28, 22]) + painel(250, 1.2, [24, 14, 30]) + painel(344, 2.4, [20, 32, 12]) + '</g>' +
+    // vento vermelho atrás, como no portal
+    '<g class="cam-vento"><line x1="-6" y1="150" x2="40" y2="150" stroke="' + R + '" stroke-width="3" stroke-linecap="round"/><line x1="-20" y1="176" x2="34" y2="176" stroke="' + R + '" stroke-width="3" stroke-linecap="round"/><line x1="-2" y1="202" x2="30" y2="202" stroke="' + R + '" stroke-width="3" stroke-linecap="round"/></g>' +
+    (foto ? '<g class="cam-corpo"><ellipse cx="350" cy="286" rx="310" ry="8" fill="rgba(0,0,0,.35)"/><image href="caminhao-lube.webp" x="30" y="26" width="640" height="259" preserveAspectRatio="xMidYMid meet"/></g>' :
     '<g transform="translate(25,38)"><g class="cam-corpo">' +
       '<ellipse cx="325" cy="238" rx="300" ry="9" fill="rgba(0,0,0,.35)"/>' +
       '<rect x="18" y="26" width="404" height="158" fill="url(#' + u + 'b)"/><rect x="18" y="26" width="404" height="9" fill="#DCE3EC"/>' +
@@ -149,31 +152,7 @@ function caminhaoDesenho(u) {
       '<rect x="586" y="146" width="14" height="26" rx="3" fill="#FFC24D"/><rect x="424" y="196" width="180" height="18" fill="#232C42"/>' +
       '<rect x="18" y="206" width="406" height="12" fill="#1A2238"/><rect x="252" y="160" width="96" height="46" rx="10" fill="#AEB8C7"/><rect x="252" y="160" width="96" height="8" rx="4" fill="#D6DEE9"/>' +
       rodas +
-    '</g></g>';
-}
-// a cena em volta do caminhão (foto, ou o desenho de reserva): estrada, painéis caindo, vento e o brilho no topo do baú
-function caminhaoSVG(desenho) {
-  var R = "#EE1B24", u = "cam" + (++camUid), topo = desenho ? 64 : 52;
-  // painel pequeno (cartão com barras e uma linha); x = onde cai, d = atraso, h = alturas das barras
-  var painel = function (x, d, h) {
-    return '<g transform="translate(' + x + ',0)"><g class="cam-painel" style="--d:' + d + 's">' +
-      '<rect width="96" height="62" rx="9" style="fill:var(--s2);stroke:var(--ouro);stroke-width:1.6"/>' +
-      '<rect x="9" y="9" width="34" height="5" rx="2.5" style="fill:var(--ouro)"/>' +
-      '<rect x="10" y="' + (52 - h[0]) + '" width="10" height="' + h[0] + '" rx="2" style="fill:var(--azul-lt)"/>' +
-      '<rect x="24" y="' + (52 - h[1]) + '" width="10" height="' + h[1] + '" rx="2" style="fill:var(--ouro)"/>' +
-      '<rect x="38" y="' + (52 - h[2]) + '" width="10" height="' + h[2] + '" rx="2" style="fill:var(--verm-lt)"/>' +
-      '<path d="M56 46L66 36L76 40L87 22" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--azul-lt)"/></g></g>';
-  };
-  var pulso = function (x, d) { return '<ellipse class="cam-pulso" cx="' + x + '" cy="' + topo + '" rx="34" ry="6" fill="none" stroke-width="2" style="stroke:var(--ouro);--d:' + d + 's"/>'; };
-  return '<svg viewBox="0 -96 700 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Caminhão da Lube carregando os painéis">' +
-    // estrada: faixa escura com a pontilhada correndo para trás
-    '<rect x="0" y="281" width="700" height="24" rx="8" fill="#0c1530" opacity=".85"/>' +
-    '<line class="cam-estrada" x1="0" y1="293" x2="700" y2="293" stroke-width="3" stroke-dasharray="30 22" stroke-linecap="round" style="stroke:var(--ouro)"/>' +
-    // painéis caindo (atrás do caminhão)
-    '<g transform="translate(0,0)">' + painel(110, 0, [16, 28, 22]) + painel(250, 1.2, [24, 14, 30]) + painel(344, 2.4, [20, 32, 12]) + '</g>' +
-    // vento vermelho atrás, como no portal
-    '<g class="cam-vento"><line x1="-6" y1="150" x2="40" y2="150" stroke="' + R + '" stroke-width="3" stroke-linecap="round"/><line x1="-20" y1="176" x2="34" y2="176" stroke="' + R + '" stroke-width="3" stroke-linecap="round"/><line x1="-2" y1="202" x2="30" y2="202" stroke="' + R + '" stroke-width="3" stroke-linecap="round"/></g>' +
-    (desenho ? caminhaoDesenho(u) : caminhaoFoto(u)) +
+    '</g></g>') +
     // brilho no topo do baú quando o painel entra
     pulso(110 + 48, 0) + pulso(250 + 48, 1.2) + pulso(344 + 48, 2.4) +
   '</svg>';
@@ -181,9 +160,10 @@ function caminhaoSVG(desenho) {
 L.espera = function (texto) {
   var t0 = performance.now();
   var rel = L.h("div", { class: "relogio num", text: "0,0 s" });
-  var cena = L.h("div", { class: "cam-cena", html: caminhaoSVG() });
-  var foto = cena.querySelector(".cam-foto");
-  if (foto) foto.addEventListener("error", function () { cena.innerHTML = caminhaoSVG(true); });
+  var cena = L.h("div", { class: "cam-cena", html: caminhaoSVG(true) });
+  var sonda = new Image();                                  // se a foto não carregar, volta para o desenho
+  sonda.onerror = function () { cena.innerHTML = caminhaoSVG(false); };
+  sonda.src = "caminhao-lube.webp";
   var el = L.h("div", { class: "espera" }, cena, L.h("div", { class: "espera-txt" }, L.h("div", { text: texto || "Calculando a visão…" }), rel));
   var id = setInterval(function () { if (!el.isConnected) return clearInterval(id); rel.textContent = L.fNum((performance.now() - t0) / 1000, 1) + " s"; }, 100);
   return el;
